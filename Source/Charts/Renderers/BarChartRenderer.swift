@@ -44,6 +44,8 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
     
     @objc open weak var dataProvider: BarChartDataProvider?
     
+    @objc open var barRadius: CGFloat = 4
+    
     @objc public init(dataProvider: BarChartDataProvider, animator: Animator, viewPortHandler: ViewPortHandler)
     {
         super.init(animator: animator, viewPortHandler: viewPortHandler)
@@ -379,13 +381,22 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 context.setFillColor(dataSet.color(atIndex: j).cgColor)
             }
             
-            context.fill(barRect)
+            if barRadius == 0 {
+                context.fill(barRect)
+            } else {
+                UIBezierPath(roundedRect: barRect, cornerRadius: barRadius).fill()
+            }
             
             if drawBorder
             {
                 context.setStrokeColor(borderColor.cgColor)
                 context.setLineWidth(borderWidth)
-                context.stroke(barRect)
+                
+                if barRadius == 0 {
+                    context.stroke(barRect)
+                } else {
+                    UIBezierPath(roundedRect: barRect, cornerRadius: barRadius).stroke()
+                }
             }
 
             // Create and append the corresponding accessibility element to accessibilityOrderedElements
@@ -744,7 +755,11 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                 
                 setHighlightDrawPos(highlight: high, barRect: barRect)
                 
-                context.fill(barRect)
+                if barRadius == 0 {
+                    context.fill(barRect)
+                } else {
+                    UIBezierPath(roundedRect: barRect, cornerRadius: barRadius).fill()
+                }
             }
         }
     }
